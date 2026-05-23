@@ -5,7 +5,7 @@ click==8.1.7
 fastapi==0.115.12
 uvicorn[standard]==0.34.2
 jinja2==3.1.6
-python-multipart==0.0.20
+python-multipart==0.0.27
 azure-cosmos==4.9.0
 azure-keyvault-secrets==4.9.0
 azure-identity==1.23.0
