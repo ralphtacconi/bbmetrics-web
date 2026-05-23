@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Run ruff
+        run: ruff check app/ bbmetrics_dc/ --select E,F,W --ignore E501
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install httpx==0.27.0 typer==0.12.3 python-dateutil==2.9.0.post0 click==8.1.7
+          pip install fastapi==0.115.0 "uvicorn[standard]==0.30.6" jinja2==3.1.4 python-multipart==0.0.9
+          pip install pytest pytest-asyncio httpx
+
+      - name: Run tests
+        run: pytest tests/ -v
+        env:
+          BITBUCKET_BASE_URL: https://example.com
+          BITBUCKET_USERNAME: test
+          BITBUCKET_PASSWORD: test

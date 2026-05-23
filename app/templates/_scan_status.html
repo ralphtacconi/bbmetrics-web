@@ -1,0 +1,26 @@
+<div class="flex items-center gap-3 p-4 bg-slate-800 border border-slate-700 rounded-xl">
+    {% if status == 'done' %}
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="text-emerald-300 font-medium">Scan concluído!</span>
+    {% elif status == 'error' %}
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        <span class="text-red-300 font-medium">Erro no scan</span>
+    {% else %}
+        <svg class="w-5 h-5 text-yellow-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <div class="flex-1">
+            <p class="text-slate-300 text-sm font-medium">{{ stage or 'Processing...' }}</p>
+            <div class="w-full bg-slate-700 rounded-full h-1.5 mt-2">
+                <div class="bg-brand-600 h-1.5 rounded-full transition-all duration-500"
+                     style="width: {{ progress }}%"></div>
+            </div>
+        </div>
+    {% endif %}
+</div>

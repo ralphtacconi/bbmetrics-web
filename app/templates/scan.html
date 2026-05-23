@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block title %}New Scan — BBMetrics{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">New Scan</h1>
+    <p class="text-slate-400 mt-1">Configure os parâmetros para coletar métricas do Bitbucket</p>
+</div>
+
+<div id="scan-form-container">
+    <form id="scan-form" onsubmit="submitScan(event)">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left: Connection + Project -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Bitbucket Connection -->
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Bitbucket Connection</h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Bitbucket Base URL</label>
+                            <input type="url" name="bitbucket_base_url" id="bb_base_url" required
+                                   class="input-field" placeholder="https://git.example.com:8443"
+                                   value="{{ default_base_url }}">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1">Username</label>
+                                <input type="text" name="bitbucket_username" id="bb_username" required
+                                       autocomplete="username"
+                                       class="input-field" placeholder="your-username">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1">Password / Token</label>
+                                <input type="password" name="bitbucket_password" id="bb_password" required
+                                       autocomplete="current-password"
+                                       class="input-field" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" onclick="loadProjects()" id="load-projects-btn"
+                                    class="btn-secondary text-sm flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Load Projects
+                            </button>
+                            <p id="projects-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project & Repos -->
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Project &amp; Repositories</h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Project Key</label>
+                            <div class="flex gap-2">
+                                <select id="project_select" class="input-field"
+                                        onchange="onProjectChange(this.value)">
+                                    <option value="">— select after loading projects —</option>
+                                </select>
+                                <input type="text" name="project_key" id="project_key_input" required
+                                       class="input-field" placeholder="e.g. KIOSK" style="max-width:140px">
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Select from dropdown or type the key directly.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Repositories</label>
+                            <div id="repos-checkboxes" class="bg-slate-900 border border-slate-600 rounded-lg p-3 max-h-48 overflow-y-auto">
+                                <p class="text-slate-500 text-sm italic">Load projects first to see available repos.</p>
+                            </div>
+                            <input type="hidden" name="repos" id="repos_hidden">
+                            <div class="flex gap-2 mt-2">
+                                <button type="button" onclick="selectAllRepos()" class="text-xs text-brand-400 hover:text-brand-300">Select all</button>
+                                <span class="text-slate-600">|</span>
+                                <button type="button" onclick="clearAllRepos()" class="text-xs text-slate-400 hover:text-slate-300">Clear</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Or type repo slugs comma-separated in the repos field above.</p>
+                            <input type="text" id="repos_manual" placeholder="repo1, repo2, repo3"
+                                   oninput="updateReposHidden()"
+                                   class="input-field mt-2 text-sm" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Range -->
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Date Range</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">PR Start (MM-DD-YYYY)</label>
+                            <input type="text" name="pr_start" required
+                                   class="input-field" placeholder="01-01-2026" pattern="\d{2}-\d{2}-\d{4}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">PR End (MM-DD-YYYY)</label>
+                            <input type="text" name="pr_end" required
+                                   class="input-field" placeholder="03-31-2026" pattern="\d{2}-\d{2}-\d{4}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Date Field</label>
+                            <select name="date_field" class="input-field">
+                                <option value="created">Created date</option>
+                                <option value="closed">Closed date</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">PR States</label>
+                            <select name="pr_states" class="input-field">
+                                <option value="OPEN,MERGED,DECLINED">All (Open + Merged + Declined)</option>
+                                <option value="MERGED">Merged only</option>
+                                <option value="OPEN">Open only</option>
+                                <option value="DECLINED">Declined only</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Filters + Options + Submit -->
+            <div class="space-y-6">
+
+                <!-- Filters -->
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Filters</h2>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">User Filter</label>
+                        <input type="text" name="user_filter" class="input-field text-sm"
+                               placeholder="user1,user2 (optional)">
+                        <p class="text-xs text-slate-500 mt-1">Leave empty to include all users.</p>
+                    </div>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="card p-6">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 rounded-lg bg-brand-900 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Advanced</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Output Mode</label>
+                            <select name="output_mode" class="input-field text-sm">
+                                <option value="completo">Completo (all data)</option>
+                                <option value="summaries">Summaries only</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" name="enable_diffstat" id="enable_diffstat" value="true"
+                                   class="w-4 h-4 rounded border-slate-600 bg-slate-900 text-brand-600
+                                          focus:ring-brand-500">
+                            <label for="enable_diffstat" class="text-sm text-slate-300">
+                                Enable diffstat
+                                <span class="text-slate-500 text-xs block">Lines added/removed per PR (slower)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="submit-btn" class="btn-primary w-full flex items-center justify-center gap-2 py-3 text-base">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Start Scan
+                </button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- Progress card (hidden by default) -->
+<div id="progress-container" class="hidden">
+    <div class="card p-8 max-w-2xl mx-auto text-center">
+        <div class="w-16 h-16 rounded-full bg-brand-900 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-brand-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-semibold text-white mb-2">Scan em andamento...</h2>
+        <p id="progress-stage" class="text-slate-400 mb-6">Iniciando...</p>
+        <div class="w-full bg-slate-700 rounded-full h-2.5 mb-4">
+            <div id="progress-bar" class="bg-brand-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <p class="text-slate-500 text-sm">ID do scan: <span id="current-scan-id" class="font-mono text-slate-400"></span></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/app.js"></script>
+{% endblock %}

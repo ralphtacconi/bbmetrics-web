@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — BBMetrics{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex items-center justify-between">
+    <div>
+        <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+        <p class="text-slate-400 mt-1">Scans recentes de métricas do Bitbucket</p>
+    </div>
+    <a href="/scan" class="btn-primary flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Scan
+    </a>
+</div>
+
+{% if scans %}
+<div class="card overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-700">
+        <h2 class="text-lg font-semibold text-white">Scans Recentes</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-900/50">
+                <tr>
+                    <th class="table-header">Projeto / Repos</th>
+                    <th class="table-header">Período</th>
+                    <th class="table-header">Status</th>
+                    <th class="table-header">Criado em</th>
+                    <th class="table-header">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scan in scans %}
+                <tr class="table-row">
+                    <td class="table-cell">
+                        <div class="font-semibold text-white">{{ scan.params.project_key if scan.params else '—' }}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">
+                            {{ (scan.params.repos | join(', '))[:60] if scan.params and scan.params.repos else '—' }}
+                        </div>
+                    </td>
+                    <td class="table-cell">
+                        {% if scan.params %}
+                        <span class="text-slate-400">{{ scan.params.pr_start or '—' }}</span>
+                        <span class="text-slate-600 mx-1">→</span>
+                        <span class="text-slate-400">{{ scan.params.pr_end or '—' }}</span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td class="table-cell">
+                        {% set s = scan.status %}
+                        {% if s == 'done' %}
+                            <span class="badge-done">✓ Done</span>
+                        {% elif s == 'running' %}
+                            <span class="badge-running">⟳ Running</span>
+                        {% elif s == 'pending' %}
+                            <span class="badge-pending">◷ Pending</span>
+                        {% else %}
+                            <span class="badge-error">✗ Error</span>
+                        {% endif %}
+                    </td>
+                    <td class="table-cell text-slate-400">
+                        {{ scan.created_at[:16].replace('T',' ') if scan.created_at else '—' }}
+                    </td>
+                    <td class="table-cell">
+                        <a href="/results/{{ scan.scan_id }}"
+                           class="text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors">
+                            Ver resultados →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card p-16 text-center">
+    <svg class="w-16 h-16 text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+    </svg>
+    <h3 class="text-xl font-semibold text-slate-300 mb-2">Nenhum scan ainda</h3>
+    <p class="text-slate-500 mb-6">Comece criando um novo scan para ver as métricas do seu time.</p>
+    <a href="/scan" class="btn-primary inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Criar primeiro scan
+    </a>
+</div>
+{% endif %}
+{% endblock %}
