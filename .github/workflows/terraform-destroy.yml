@@ -5,6 +5,10 @@ on:
       confirm:
         description: 'Type "destroy" to confirm'
         required: true
+
+permissions:
+  contents: read
+
 jobs:
   destroy:
     if: github.event.inputs.confirm == 'destroy'

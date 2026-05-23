@@ -52,7 +52,8 @@ class CosmosStore:
 
     def list_recent_scans(self, limit: int = 20) -> List[Dict[str, Any]]:
         if self._container is not None:
-            query = f'SELECT TOP {int(limit)} * FROM c ORDER BY c.created_at DESC'
+            safe_limit = max(1, min(int(limit), 100))
+            query = f'SELECT TOP {safe_limit} * FROM c ORDER BY c.created_at DESC'
             return list(self._container.query_items(query=query, enable_cross_partition_query=True))
         scans = list(self._memory.values())
         scans.sort(key=lambda x: x.get('created_at', ''), reverse=True)
