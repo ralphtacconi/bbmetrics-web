@@ -1,4 +1,4 @@
-# ArgoCD no AKS
+# ArgoCD on AKS
 
 ## Instalação
 ```bash
