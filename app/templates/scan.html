@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Novo Scan · BBMetrics{% endblock %}
+{% block content %}
+<h1 class="mb-4 text-2xl font-bold">Novo Scan</h1>
+<form action="/scan" method="post" class="grid gap-4 rounded-lg border border-slate-800 bg-slate-900/40 p-6">
+  <div class="grid gap-4 md:grid-cols-2">
+    <label class="grid gap-2 text-sm">Bitbucket Base URL
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="base_url" value="{{ defaults.base_url }}" required />
+    </label>
+    <label class="grid gap-2 text-sm">Usuário
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="username" value="{{ defaults.username }}" required />
+    </label>
+    <label class="grid gap-2 text-sm md:col-span-2">Senha
+      <input type="password" class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="password" required />
+    </label>
+    <label class="grid gap-2 text-sm">Project Key
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="project_key" required />
+    </label>
+    <label class="grid gap-2 text-sm">Repos (separados por vírgula)
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="repos" required />
+    </label>
+    <label class="grid gap-2 text-sm">PR Start (MM-DD-YYYY)
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="pr_start" placeholder="01-01-2026" required />
+    </label>
+    <label class="grid gap-2 text-sm">PR End (MM-DD-YYYY)
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="pr_end" placeholder="01-31-2026" required />
+    </label>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <label class="grid gap-2 text-sm">Output mode
+      <select class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="output_mode">
+        <option value="completo">completo</option>
+        <option value="summaries">summaries</option>
+      </select>
+    </label>
+    <label class="grid gap-2 text-sm">PR States
+      <input class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="pr_states" value="OPEN,MERGED,DECLINED" />
+    </label>
+    <label class="grid gap-2 text-sm">Date field
+      <select class="rounded border border-slate-700 bg-slate-950 px-3 py-2" name="date_field">
+        <option value="created">created</option>
+        <option value="closed">closed</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="flex items-center gap-6 text-sm">
+    <label><input type="checkbox" name="include_comment_text" class="mr-2" />Incluir texto de comentários</label>
+    <label><input type="checkbox" name="enable_diffstat" class="mr-2" />Habilitar diffstat</label>
+  </div>
+
+  <button class="w-fit rounded bg-blue-600 px-4 py-2 font-semibold hover:bg-blue-500" type="submit">Executar scan</button>
+</form>
+{% endblock %}

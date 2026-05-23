@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbmetrics
+  namespace: bbmetrics
+spec:
+  selector:
+    app: bbmetrics
+  ports:
+  - port: 80
+    targetPort: 8000

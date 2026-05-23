@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Resultados · BBMetrics{% endblock %}
+{% block content %}
+<h1 class="mb-2 text-2xl font-bold">Resultados do Scan</h1>
+<p class="mb-4 text-sm text-slate-400">Scan ID: <span class="font-mono">{{ scan.scan_id }}</span></p>
+
+<div class="mb-4 rounded border border-slate-800 bg-slate-900/40 p-4">
+  <p>Status: <strong id="scan-status">{{ scan.status }}</strong></p>
+  <p id="scan-error" class="mt-2 text-red-400">{{ scan.error or "" }}</p>
+</div>
+
+<div id="results-area" class="hidden grid gap-6 md:grid-cols-2">
+  <div class="rounded border border-slate-800 bg-slate-900/40 p-4">
+    <h2 class="mb-3 text-lg font-semibold">Distribuição de PRs</h2>
+    <canvas id="prsChart"></canvas>
+  </div>
+  <div class="rounded border border-slate-800 bg-slate-900/40 p-4">
+    <h2 class="mb-3 text-lg font-semibold">AI Insights</h2>
+    <p id="ai-summary" class="mb-3 text-sm text-slate-200"></p>
+    <ul id="ai-alerts" class="mb-3 list-disc pl-5 text-sm text-amber-300"></ul>
+    <ul id="ai-recommendations" class="list-disc pl-5 text-sm text-emerald-300"></ul>
+  </div>
+</div>
+
+<script>
+const scanId = {{ scan.scan_id|tojson }};
+let chart;
+
+function renderDone(data) {
+  const prs = data.results?.prs || [];
+  const countByState = { OPEN: 0, MERGED: 0, DECLINED: 0 };
+  prs.forEach((p) => {
+    const st = String(p.state || '').toUpperCase();
+    if (countByState[st] !== undefined) countByState[st] += 1;
+  });
+
+  const ctx = document.getElementById('prsChart');
+  if (ctx) {
+    chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['OPEN', 'MERGED', 'DECLINED'],
+        datasets: [{
+          label: 'PRs',
+          data: [countByState.OPEN, countByState.MERGED, countByState.DECLINED],
+          backgroundColor: ['#f59e0b', '#10b981', '#ef4444']
+        }]
+      }
+    });
+  }
+
+  const ai = data.ai_insights || {};
+  document.getElementById('ai-summary').textContent = ai.summary || '';
+  const alerts = document.getElementById('ai-alerts');
+  (ai.risk_alerts || []).forEach((x) => {
+    const li = document.createElement('li');
+    li.textContent = x;
+    alerts.appendChild(li);
+  });
+  const rec = document.getElementById('ai-recommendations');
+  (ai.recommendations || []).forEach((x) => {
+    const li = document.createElement('li');
+    li.textContent = x;
+    rec.appendChild(li);
+  });
+
+  document.getElementById('results-area').classList.remove('hidden');
+}
+
+async function poll() {
+  const r = await fetch(`/api/scan/${scanId}/status`);
+  const data = await r.json();
+  document.getElementById('scan-status').textContent = data.status;
+  document.getElementById('scan-error').textContent = data.error || '';
+
+  if (data.status === 'done') {
+    renderDone(data);
+    return;
+  }
+  if (data.status === 'error') {
+    return;
+  }
+  setTimeout(poll, 3000);
+}
+
+if (document.getElementById('scan-status').textContent !== 'done') {
+  setTimeout(poll, 1500);
+} else {
+  fetch(`/api/scan/${scanId}/status`).then((r) => r.json()).then(renderDone);
+}
+</script>
+{% endblock %}

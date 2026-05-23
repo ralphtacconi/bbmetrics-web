@@ -1,0 +1,16 @@
+resources:
+- ../../base
+
+images:
+- name: YOUR_ACR.azurecr.io/bbmetrics
+  newName: YOUR_ACR.azurecr.io/bbmetrics
+  newTag: latest
+
+patches:
+- target:
+    kind: Deployment
+    name: bbmetrics
+  patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 2

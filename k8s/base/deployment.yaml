@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bbmetrics
+  namespace: bbmetrics
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bbmetrics
+  template:
+    metadata:
+      labels:
+        app: bbmetrics
+    spec:
+      containers:
+      - name: bbmetrics
+        image: YOUR_ACR.azurecr.io/bbmetrics:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: COSMOS_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: bbmetrics-secrets
+              key: cosmos-endpoint
+        - name: COSMOS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bbmetrics-secrets
+              key: cosmos-key
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: bbmetrics-secrets
+              key: appinsights-connection-string
+        - name: AZURE_OPENAI_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: bbmetrics-secrets
+              key: openai-endpoint
+        - name: AZURE_OPENAI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bbmetrics-secrets
+              key: openai-key
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000

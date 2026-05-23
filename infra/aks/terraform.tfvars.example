@@ -1,0 +1,5 @@
+location            = "eastus"
+resource_group_name = "bbmetrics-aks-rg"
+aks_cluster_name    = "bbmetrics-aks"
+node_count          = 2
+vm_size             = "Standard_B2s"

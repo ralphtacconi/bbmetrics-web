@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full bg-slate-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}BBMetrics Web{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="min-h-full bg-slate-950 text-slate-100">
+    <header class="border-b border-slate-800 bg-slate-900/70">
+      <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <a class="font-bold text-blue-400" href="/">BBMetrics Web</a>
+        <a class="rounded bg-blue-600 px-3 py-2 text-sm font-semibold hover:bg-blue-500" href="/scan">Novo Scan</a>
+      </div>
+    </header>
+    <main class="mx-auto max-w-6xl px-6 py-6">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
