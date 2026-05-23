@@ -1,0 +1,1 @@
+# UI package for BBMetrics (kept separate from bbmetrics_dc CLI)

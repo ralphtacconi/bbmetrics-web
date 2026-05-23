@@ -1,0 +1,1 @@
+.\run.ps1 -ProjectKey "KIOSK" -User "lakamine" -Repos "Kiosk","KioskAutomation" -OutDir ".\out" -PrStart "01-01-2026" -PrEnd "03-13-2026"

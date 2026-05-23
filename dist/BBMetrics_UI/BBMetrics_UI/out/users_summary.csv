@@ -1,0 +1,5 @@
+﻿user,group,repo,avg_pr_time_open_minutes,median_pr_time_open_minutes,avg_pr_comments_total,avg_pr_commits_total,avg_commits_per_pr,avg_lines_changed_per_commit,avg_time_to_first_review_minutes,median_time_to_first_review_minutes,avg_time_to_first_approval_minutes,median_time_to_first_approval_minutes,prs_opened_count,commits_count,lines_added,lines_removed,lines_changed,files_changed,prs_with_review_time_count,prs_with_approval_time_count,diffstat_enabled
+tferreira,MCD,kiosk,5221.98,5221.98,0.0,0.0,1.5,0.0,,,57.675,57.675,2,3,0,0,0,0,0,2,1
+tferreira,MCD,kioskui,5219.16,5219.16,0.0,0.0,1.5,0.0,,,54.405,54.405,2,3,0,0,0,0,0,2,1
+lakamine,RDI,kiosk,55.971,67.96,0.25,0.0,1.5,0.0,,,35.794,40.24,8,12,0,0,0,0,0,8,1
+lakamine,RDI,kioskui,115.485,115.485,0.0,0.0,1.0,0.0,,,94.445,94.445,2,2,0,0,0,0,0,2,1

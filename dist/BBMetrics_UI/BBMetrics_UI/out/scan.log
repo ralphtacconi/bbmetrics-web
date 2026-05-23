@@ -1,0 +1,10 @@
+=== scan start: 2026-04-01T15:18:26 ===
+project_key=KIOSK out=C:\source\OneDrive - Capgemini\Capgemini\RDI\BitBucket-Metrics\dist\BBMetrics_UI\BBMetrics_UI\out user=lakamine,rabreu,rtacco,tferreira,wsoares repos=kiosk,kioskui pr_start=02-01-2026 pr_end=02-10-2026 output_mode=completo states=MERGED activities_limit=25 date_field=closed enable_diffstat=True ignore_epic_prs=True
+start=2026-02-01T00:00:00+00:00 (1769904000000)
+end=2026-02-10T23:59:59+00:00 (1770767999000)
+log_file=C:\source\OneDrive - Capgemini\Capgemini\RDI\BitBucket-Metrics\dist\BBMetrics_UI\BBMetrics_UI\out\scan.log
+include_comment_text=False
+users_csv=C:\source\OneDrive - Capgemini\Capgemini\RDI\BitBucket-Metrics\dist\BBMetrics_UI\BBMetrics_UI\in\users.csv
+
+PRs in range (after user filter): 14
+=== scan end: 2026-04-01T15:24:27 ===
