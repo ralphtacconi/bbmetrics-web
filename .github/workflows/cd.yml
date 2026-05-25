@@ -5,6 +5,7 @@ on:
     workflows: ["CI - Build and Push Docker image"]
     types:
       - completed
+    workflow_dispatch:
 
 env:
   RESOURCE_GROUP: rg-bbmetrics
