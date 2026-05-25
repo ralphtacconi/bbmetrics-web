@@ -27,3 +27,7 @@ variable "cosmos_account_name" {
   type        = string
   default     = "cosmos-bbmetrics"
 }
+variable "subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+}

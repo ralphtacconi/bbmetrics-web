@@ -1,6 +1,0 @@
-# Example values — copy to terraform.tfvars and adjust before running.
-location            = "eastus"
-resource_group_name = "rg-bbmetrics"
-acr_name            = "acrbbmetricsdev"       # must be globally unique, alphanumeric only
-app_name            = "bbmetrics"
-cosmos_account_name = "cosmos-bbmetrics-dev"  # must be globally unique

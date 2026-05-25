@@ -1,53 +1,39 @@
-name: CI
+name: CI - Build and Push Docker image
 
 on:
   push:
-    branches: ["**"]
-  pull_request:
-    branches: [master, main]
+    branches:
+      - bbmetrics-container
 
-permissions:
-  contents: read
+env:
+  ACR_NAME: acrbbmetricsdev
+  IMAGE: bbmetrics-web
+  TAG: latest
 
 jobs:
-  lint:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Azure CLI
+        uses: azure/CLI@v1
+
+      - name: Azure Login
+        uses: azure/login@v1
         with:
-          python-version: "3.11"
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install dependencies
+      - name: Build Docker image
+        run: docker build -t $ACR_NAME.azurecr.io/$IMAGE:$TAG .
+
+      - name: Azure ACR login (with token)
         run: |
-          python -m pip install --upgrade pip
-          pip install ruff
+          az acr login --name $ACR_NAME --expose-token
+          TOKEN=$(az acr login --name $ACR_NAME --expose-token --query accessToken -o tsv)
+          echo $TOKEN | docker login $ACR_NAME.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
 
-      - name: Run ruff
-        run: ruff check app/ bbmetrics_dc/ --select E,F,W --ignore E501
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install httpx==0.27.0 typer==0.12.3 python-dateutil==2.9.0.post0 click==8.1.7
-          pip install fastapi==0.115.0 "uvicorn[standard]==0.30.6" jinja2==3.1.4 python-multipart==0.0.9
-          pip install pytest pytest-asyncio httpx
-
-      - name: Run tests
-        run: pytest tests/ -v
-        env:
-          BITBUCKET_BASE_URL: https://example.com
-          BITBUCKET_USERNAME: test
-          BITBUCKET_PASSWORD: test
+      - name: Push image to ACR
+        run: docker push $ACR_NAME.azurecr.io/$IMAGE:$TAG

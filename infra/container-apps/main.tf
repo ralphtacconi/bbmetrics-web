@@ -10,6 +10,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  subscription_id = var.subscription_id
 }
 
 # ─── Resource Group ─────────────────────────────────────────────────────────
@@ -48,19 +49,19 @@ resource "azurerm_container_registry" "bbmetrics" {
 # ─── Cosmos DB ───────────────────────────────────────────────────────────────
 resource "azurerm_cosmosdb_account" "bbmetrics" {
   name                = var.cosmos_account_name
-  location            = azurerm_resource_group.bbmetrics.location
+  location            = "Brazil South"
   resource_group_name = azurerm_resource_group.bbmetrics.name
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
 
-  enable_free_tier = true
+  free_tier_enabled = true
 
   consistency_policy {
     consistency_level = "Session"
   }
 
   geo_location {
-    location          = azurerm_resource_group.bbmetrics.location
+    location          = "Brazil South"
     failover_priority = 0
   }
 }

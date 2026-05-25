@@ -100,7 +100,7 @@ uvicorn app.main:app --reload --port 8000
 cd infra/container-apps
 
 # 1. Copiar e ajustar variáveis
-cp terraform.tfvars.example terraform.tfvars
+cp terraform.tfvars terraform.tfvars
 # Editar terraform.tfvars com nomes únicos para ACR e Cosmos DB
 
 # 2. (Opcional) Configurar backend remoto em backend.tf
