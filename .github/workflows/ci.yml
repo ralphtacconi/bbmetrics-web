@@ -1,0 +1,36 @@
+name: CI - Build and Push Docker image
+
+on:
+  push:
+    branches:
+      - bbmetrics-container
+
+env:
+  ACR_NAME: acrbbmetricsdev
+  IMAGE: bbmetrics-web
+  TAG: latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build Docker image
+        run: docker build -t $ACR_NAME.azurecr.io/$IMAGE:$TAG .
+
+      - name: Azure ACR login (with token)
+        run: |
+          az acr login --name $ACR_NAME --expose-token
+          TOKEN=$(az acr login --name $ACR_NAME --expose-token --query accessToken -o tsv)
+          echo $TOKEN | docker login $ACR_NAME.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
+
+      - name: Push image to ACR
+        run: docker push $ACR_NAME.azurecr.io/$IMAGE:$TAG
