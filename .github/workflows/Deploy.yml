@@ -10,6 +10,7 @@ on:
 env:
   RESOURCE_GROUP: rg-bbmetrics
 
+#testando o CI
 jobs:
   terraform-deploy:
     runs-on: ubuntu-latest
