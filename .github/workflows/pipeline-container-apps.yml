@@ -1,4 +1,4 @@
-name: CI - Build and Push Docker image
+name: Pipeline - Container Apps
 
 on:
   push:
@@ -9,11 +9,11 @@ env:
   ACR_NAME: acrbbmetricsdev
   IMAGE: bbmetrics-web
   TAG: latest
+  RESOURCE_GROUP: rg-bbmetrics
 
 jobs:
-  build-and-push:
+  ci:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -28,9 +28,29 @@ jobs:
 
       - name: Azure ACR login (with token)
         run: |
-          az acr login --name $ACR_NAME --expose-token
           TOKEN=$(az acr login --name $ACR_NAME --expose-token --query accessToken -o tsv)
           echo $TOKEN | docker login $ACR_NAME.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
 
       - name: Push image to ACR
         run: docker push $ACR_NAME.azurecr.io/$IMAGE:$TAG
+
+  cd:
+    runs-on: ubuntu-latest
+    needs: ci  # 👈 substitui o workflow_run, CD só roda se CI passou
+    defaults:
+      run:
+        working-directory: ./infra/container-apps
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
