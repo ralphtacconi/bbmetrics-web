@@ -6,11 +6,11 @@
 #   az storage account create -n stbbmetricstfstate -g rg-tfstate -l eastus --sku Standard_LRS
 #   az storage container create -n tfstate --account-name stbbmetricstfstate
 #
-# terraform {
-#   backend "azurerm" {
-#     resource_group_name  = "rg-tfstate"
-#     storage_account_name = "stbbmetricstfstate"
-#     container_name       = "tfstate"
-#     key                  = "container-apps/terraform.tfstate"
-#   }
-# }
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-tfstate"
+    storage_account_name = "stbbmetricstfstate"
+    container_name       = "tfstate"
+    key                  = "container-apps/terraform.tfstate"
+  }
+}
