@@ -53,7 +53,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false -no-color
+
+      - name: Show Terraform Vars
+        run: cat ./infra/container-apps/terraform.tfvars
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -input=false -no-color -lock=false -parallelism=1
