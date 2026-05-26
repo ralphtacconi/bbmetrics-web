@@ -56,7 +56,7 @@ jobs:
         run: terraform init -input=false -no-color
 
       - name: Show Terraform Vars
-        run: cat ./infra/container-apps/terraform.tfvars
+        run: cat terraform.tfvars
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -no-color -lock=false -parallelism=1
