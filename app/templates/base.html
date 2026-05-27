@@ -31,6 +31,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.1/24/outline/style.min.css"
           crossorigin="anonymous"/>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <style>
         body { background-color: #0f172a; }
         .nav-link { @apply text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition-colors; }
@@ -48,10 +50,9 @@
         .table-row     { @apply border-b border-slate-700 hover:bg-slate-750 transition-colors; }
 
         /* --------- CUSTOM CSS PARA MELHORAR INPUTS NO DARK ---------- */
-        /* Garante que todo input, select, textarea tem contraste alto, inclusive com ou sem .input-field */
         input, textarea, select {
-            color: #e0e6ed !important;          /* texto branco quebrado */
-            background: #171e2e !important;     /* fundo escuro mas não preto absoluto */
+            color: #e0e6ed !important;
+            background: #171e2e !important;
             border-color: #394867 !important;
             border-radius: 6px !important;
             padding: 6px 10px !important;
@@ -63,7 +64,6 @@
             border-color: #4682fa !important;
             outline: none !important;
         }
-        /* Placeholder sempre visível e bem contrastado */
         ::placeholder,
         input::placeholder,
         textarea::placeholder {
@@ -73,17 +73,27 @@
         .form-group, .form-row, .form-section {
             margin-bottom: 12px !important;
         }
-
-        /* Ajuste para o Tailwind com py-2 (diminui altura dos campos) */
         input.py-2, select.py-2, textarea.py-2 {
             padding-top: 6px !important;
             padding-bottom: 6px !important;
             height: 34px !important;
         }
-        /* Se usar .input-field, reforça contraste e placeholder */
         .input-field::placeholder {
             color: #7c8ba7 !important;
         }
+
+        /* DataTables Dark mode overrides */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #e0e6ed !important;
+            background: #1e293b !important;
+            border: 1px solid #394867 !important;
+            border-radius: 5px !important;
+            margin: 2px;
+        }
+        table.dataTable tr { background-color: #1e293b !important; color: #e0e6ed !important;}
+        table.dataTable thead { background-color: #0f172a !important;}
+        table.dataTable td { color: #e0e6ed !important;}
+        table.dataTable th { color: #60a5fa !important;}
     </style>
     {% block extra_head %}{% endblock %}
 </head>
