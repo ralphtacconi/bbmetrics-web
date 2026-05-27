@@ -2,7 +2,7 @@ output "container_app_url_long" {
   value = "https://${azurerm_container_app.bbmetrics.latest_revision_fqdn}"
 }
 output "container_app_url" {
-  value = "https://${azurerm_container_app.bbmetrics.fqdn}"
+  value = "https://${azurerm_container_app.bbmetrics.ingress[0].fqdn}"
 }
 
 output "acr_login_server" {
