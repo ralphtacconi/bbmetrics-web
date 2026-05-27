@@ -132,6 +132,7 @@ resource "azurerm_container_app" "bbmetrics" {
   resource_group_name          = azurerm_resource_group.bbmetrics.name
   revision_mode                = "Single"
 
+
   registry {
     server               = var.acr_login_server
     username             = var.acr_admin_username
@@ -149,7 +150,7 @@ resource "azurerm_container_app" "bbmetrics" {
 
     container {
       name   = "bbmetrics"
-      image  = "${var.acr_login_server}/bbmetrics-web:latest"
+      image = "acrbbmetricsdev.azurecr.io/bbmetrics-web:${var.image_tag}"
       cpu    = 0.5
       memory = "1Gi"
 

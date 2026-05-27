@@ -8,15 +8,21 @@ on:
 env:
   ACR_NAME: acrbbmetricsdev
   IMAGE: bbmetrics-web
-  TAG: latest
   RESOURCE_GROUP: rg-bbmetrics
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set_tag.outputs.IMAGE_TAG }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Set IMAGE_TAG var (git short SHA)
+        id: set_tag
+        run: |
+          echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Azure Login
         uses: azure/login@v1
@@ -24,7 +30,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Build Docker image
-        run: docker build -t $ACR_NAME.azurecr.io/$IMAGE:$TAG .
+        run: docker build -t $ACR_NAME.azurecr.io/$IMAGE:${{ steps.set_tag.outputs.IMAGE_TAG }} .
 
       - name: Azure ACR login (with token)
         run: |
@@ -32,7 +38,7 @@ jobs:
           echo $TOKEN | docker login $ACR_NAME.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
 
       - name: Push image to ACR
-        run: docker push $ACR_NAME.azurecr.io/$IMAGE:$TAG
+        run: docker push $ACR_NAME.azurecr.io/$IMAGE:${{ steps.set_tag.outputs.IMAGE_TAG }}
 
   cd:
     runs-on: ubuntu-latest
@@ -56,7 +62,11 @@ jobs:
         run: terraform init -input=false -no-color -reconfigure
 
       - name: Show Terraform Vars
-        run: cat terraform.tfvars
+        run: cat terraform.tfvars || true
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -no-color -lock=false -parallelism=1
+        env:
+          IMAGE_TAG: ${{ needs.ci.outputs.image_tag }}
+        run: |
+          terraform apply -auto-approve -input=false -no-color \
+            -var="image_tag=$IMAGE_TAG"

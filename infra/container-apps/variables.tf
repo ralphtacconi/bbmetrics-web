@@ -44,3 +44,6 @@ variable "acr_admin_password" {
   description = "ACR pass"
 }
 
+variable "image_tag" {
+  description = "Dynamic Image"
+}
