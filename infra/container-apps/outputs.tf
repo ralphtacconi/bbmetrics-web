@@ -1,6 +1,8 @@
+output "container_app_url_long" {
+  value = "https://${azurerm_container_app.bbmetrics.latest_revision_fqdn}"
+}
 output "container_app_url" {
-  description = "BBMetrics web application URL"
-  value       = "https://${azurerm_container_app.bbmetrics.latest_revision_fqdn}"
+  value = "https://${azurerm_container_app.bbmetrics.fqdn}"
 }
 
 output "acr_login_server" {
@@ -18,3 +20,4 @@ output "app_insights_connection_string" {
   value       = azurerm_application_insights.bbmetrics.connection_string
   sensitive   = true
 }
+
