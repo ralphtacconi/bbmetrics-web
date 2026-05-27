@@ -20,6 +20,7 @@ from BBMetrics_UI.bb_api import ProjectChoice, RepoChoice, list_projects, list_r
 _PROGRESS_MARKER = "__BBMETRICS_PROGRESS__"
 _STAGE_MARKER = "__BBMETRICS_STAGE__"
 
+#newcomments
 
 def _set_windows_appusermodelid(app_id: str) -> None:
     if sys.platform != "win32":
