@@ -36,14 +36,14 @@ def apply_modern_theme(app: QtWidgets.QApplication, *, dark: bool = True) -> Non
     if dark:
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.Window, QtGui.QColor("#0f172a"))
-        palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("#e5e7eb"))
+        palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("#222831"))         # mais escuro
         palette.setColor(QtGui.QPalette.Base, QtGui.QColor("#0b1220"))
         palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor("#111827"))
         palette.setColor(QtGui.QPalette.ToolTipBase, QtGui.QColor("#111827"))
-        palette.setColor(QtGui.QPalette.ToolTipText, QtGui.QColor("#e5e7eb"))
-        palette.setColor(QtGui.QPalette.Text, QtGui.QColor("#e5e7eb"))
+        palette.setColor(QtGui.QPalette.ToolTipText, QtGui.QColor("#222831"))
+        palette.setColor(QtGui.QPalette.Text, QtGui.QColor("#222831"))
         palette.setColor(QtGui.QPalette.Button, QtGui.QColor("#111827"))
-        palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor("#e5e7eb"))
+        palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor("#222831"))        # mais escuro
         palette.setColor(QtGui.QPalette.BrightText, QtGui.QColor("#ffffff"))
         palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor("#2563eb"))
         palette.setColor(QtGui.QPalette.HighlightedText, QtGui.QColor("#ffffff"))
@@ -55,25 +55,25 @@ def apply_modern_theme(app: QtWidgets.QApplication, *, dark: bool = True) -> Non
         QWidget { font-size: 12px; }
         QGroupBox {
             border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 10px;
-            margin-top: 12px;
-            padding: 10px;
+            border-radius: 6px;
+            margin-top: 5px;
+            padding: 6px;
         }
         QGroupBox::title {
             subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 6px;
-            color: rgba(226, 232, 240, 0.95);
+            left: 8px;
+            padding: 0 4px;
+            color: rgba(55, 65, 81, 0.95);
             font-weight: 600;
         }
 
-        QLabel#muted { color: rgba(226, 232, 240, 0.65); }
+        QLabel#muted { color: rgba(55, 65, 81, 0.85); }
 
         QLineEdit, QComboBox, QListWidget, QPlainTextEdit, QTableWidget {
             border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 8px;
-            padding: 7px 10px;
-            background: rgba(2, 6, 23, 0.25);
+            border-radius: 5px;
+            padding: 4px 7px;
+            background: rgba(2, 6, 23, 0.20);
         }
         QLineEdit:focus, QComboBox:focus, QListWidget:focus, QPlainTextEdit:focus, QTableWidget:focus {
             border: 1px solid rgba(37, 99, 235, 0.9);
@@ -81,34 +81,33 @@ def apply_modern_theme(app: QtWidgets.QApplication, *, dark: bool = True) -> Non
 
         QPushButton {
             border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 10px;
-            padding: 8px 14px;
-            background: rgba(2, 6, 23, 0.25);
+            border-radius: 5px;
+            padding: 5px 10px;
+            background: rgba(2, 6, 23, 0.22);
         }
-        QPushButton:hover { border-color: rgba(148, 163, 184, 0.45); }
-        QPushButton:pressed { background: rgba(2, 6, 23, 0.45); }
-        QPushButton:disabled { color: rgba(226, 232, 240, 0.35); border-color: rgba(148, 163, 184, 0.12); }
+        QPushButton:hover { border-color: rgba(148, 163, 184, 0.40); }
+        QPushButton:pressed { background: rgba(2, 6, 23, 0.35); }
+        QPushButton:disabled { color: rgba(55, 65, 81, 0.32); border-color: rgba(148, 163, 184, 0.10); }
 
         QPushButton#primary {
-            background: rgba(37, 99, 235, 0.95);
+            background: rgba(37, 99, 235, 0.90);
             border-color: rgba(37, 99, 235, 1.0);
             color: white;
             font-weight: 700;
         }
-        QPushButton#primary:hover { background: rgba(29, 78, 216, 0.98); }
+        QPushButton#primary:hover { background: rgba(29, 78, 216, 0.95); }
         QPushButton#primary:pressed { background: rgba(30, 64, 175, 1.0); }
 
         QProgressBar {
             border: 1px solid rgba(148, 163, 184, 0.25);
-            border-radius: 8px;
+            border-radius: 5px;
             text-align: center;
             height: 18px;
-            background: rgba(2, 6, 23, 0.25);
+            background: rgba(2, 6, 23, 0.15);
         }
-        QProgressBar::chunk { background: rgba(37, 99, 235, 0.95); border-radius: 8px; }
+        QProgressBar::chunk { background: rgba(37, 99, 235, 0.93); border-radius: 5px; }
         """
     )
-
 
 def _fmt_duration(seconds: float) -> str:
     seconds = max(0.0, float(seconds))

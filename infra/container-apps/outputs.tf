@@ -5,7 +5,7 @@ output "container_app_url" {
 
 output "acr_login_server" {
   description = "Azure Container Registry login server"
-  value       = azurerm_container_registry.bbmetrics.login_server
+  value       = var.acr_login_server
 }
 
 output "cosmos_endpoint" {

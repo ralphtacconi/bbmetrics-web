@@ -8,7 +8,7 @@
 #
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg-bbmetrics"
+    resource_group_name  = "rg-bbmetric-config"
     storage_account_name = "bbmetricscontainer"
     container_name       = "tfstate"
     key                  = "container-apps/terraform.tfstate"

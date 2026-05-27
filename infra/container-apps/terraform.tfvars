@@ -5,3 +5,6 @@ container_app_env = "bbmetrics-env"                                  # Nome do a
 acr_name          = "acrbbmetricsdev"                                # Nome do Azure Container Registry (sem o domínio azurecr.io)
 image_name        = "bbmetrics-web"                                  # Nome da imagem do container
 image_tag         = "latest"                                         # Tag da imagem
+acr_login_server    = "acrbbmetricsdev.azurecr.io"
+acr_admin_username  = "acrbbmetricsdev"
+acr_admin_password  = "AeVMJopxrqLJSqwCJ4uhHGSFA1Bc6WUeV2rdlxoG4eJ55YH8OjH0JQQJ99CEACZoyfiEqg7NAAACAZCRMGAI"

@@ -31,3 +31,16 @@ variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
 }
+
+variable "acr_login_server" {
+  description = "login ACR"
+  type = string
+}
+variable "acr_admin_username" {
+  description = "ACR admin"
+  type = string
+}
+variable "acr_admin_password" {
+  description = "ACR pass"
+}
+

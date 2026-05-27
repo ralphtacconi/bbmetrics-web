@@ -1,0 +1,33 @@
+# Variáveis
+RESOURCE_GROUP="rg-bbmetrics"
+STORAGE_ACCOUNT="bbmetricscontainer" # nome global e minúsculo!
+CONTAINER_NAME="tfstate"
+
+# Crie Resource Group (se não existir)
+az group create --name $RESOURCE_GROUP --location brazilsouth
+
+# Crie Storage Account
+az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --location brazilsouth --sku Standard_LRS
+
+# Crie Blob Container para o state
+ACCOUNT_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --query '[0].value' -o tsv)
+az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT --account-key $ACCOUNT_KEY
+
+
+
+Deu certo. Agora quero mexer no Ui do programa, quando rodei a primeira vez, as letras estavam muito claras e os campos com muito espacamento entre eles.
+
+
+Comandos que preciso da pra criar
+1 - criar uma imagem no acr.
+2 - faze ro build da imagem e push
+3 criar storage account pra banckend
+4 - se excluir fazer purge do key vault
+
+
+docker login acrbbmetricsdev.azurecr.io -u acrbbmetricsdev -p AeVMJopxrqLJSqwCJ4uhHGSFA1Bc6WUeV2rdlxoG4eJ55YH8OjH0JQQJ99CEACZoyfiEqg7NAAACAZCRMGAI
+
+docker nao autorizado
+az acr credential show --name acrbbmetricsdev
+docker login acrbbmetricsdev.azurecr.io -u <username> -p <password>
+

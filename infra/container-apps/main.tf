@@ -38,13 +38,13 @@ resource "azurerm_application_insights" "bbmetrics" {
 }
 
 # ─── Container Registry ───────────────────────────────────────────────────────
-resource "azurerm_container_registry" "bbmetrics" {
-  name                = var.acr_name
-  location            = azurerm_resource_group.bbmetrics.location
-  resource_group_name = azurerm_resource_group.bbmetrics.name
-  sku                 = "Basic"
-  admin_enabled       = true
-}
+# resource "azurerm_container_registry" "bbmetrics" {
+#   name                = var.acr_name
+#   location            = azurerm_resource_group.bbmetrics.location
+#   resource_group_name = "rg-bbmetric-config"
+#   sku                 = "Basic"
+#   admin_enabled       = true
+# }
 
 # ─── Cosmos DB ───────────────────────────────────────────────────────────────
 resource "azurerm_cosmosdb_account" "bbmetrics" {
@@ -77,7 +77,7 @@ resource "azurerm_cosmosdb_sql_container" "scans" {
   resource_group_name = azurerm_resource_group.bbmetrics.name
   account_name        = azurerm_cosmosdb_account.bbmetrics.name
   database_name       = azurerm_cosmosdb_sql_database.bbmetrics.name
-  partition_key_path  = "/scan_id"
+  partition_key_paths  = ["/scan_id"]
   throughput          = 400
 }
 
@@ -133,14 +133,14 @@ resource "azurerm_container_app" "bbmetrics" {
   revision_mode                = "Single"
 
   registry {
-    server               = azurerm_container_registry.bbmetrics.login_server
-    username             = azurerm_container_registry.bbmetrics.admin_username
+    server               = var.acr_login_server
+    username             = var.acr_admin_username
     password_secret_name = "acr-password"
   }
 
   secret {
     name  = "acr-password"
-    value = azurerm_container_registry.bbmetrics.admin_password
+    value = var.acr_admin_password
   }
 
   template {
@@ -149,7 +149,7 @@ resource "azurerm_container_app" "bbmetrics" {
 
     container {
       name   = "bbmetrics"
-      image  = "${azurerm_container_registry.bbmetrics.login_server}/bbmetrics-web:latest"
+      image  = "${var.acr_login_server}/bbmetrics-web:latest"
       cpu    = 0.5
       memory = "1Gi"
 

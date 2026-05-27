@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/bbmetrics_dc/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/infra/container-apps/.terraform" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (BitBucket-Metrics)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
