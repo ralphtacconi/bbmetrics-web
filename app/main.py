@@ -224,6 +224,7 @@ async def start_scan(
 
 @app.get("/results/{scan_id}", response_class=HTMLResponse)
 async def scan_results(request: Request, scan_id: str) -> HTMLResponse:
+    print(f"DEBUG: Chamou scan_results com scan_id={scan_id}")
     doc = _load_scan(scan_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Scan not found.")
