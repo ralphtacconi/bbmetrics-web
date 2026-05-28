@@ -95,7 +95,6 @@
 </head>
 <body class="text-slate-100 min-h-screen">
 
-<!-- Navbar -->
 <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -112,7 +111,7 @@
                     <a href="/scan" class="nav-link {% if request.url.path == '/scan' %}active{% endif %}">New Scan</a>
                 </div>
             </div>
-            <!-- REMOVIDO ÍCONE DO GITHUB -->
+            <!-- Ícone do GitHub REMOVIDO -->
         </div>
     </div>
 </nav>
@@ -123,7 +122,6 @@
 <footer class="border-t border-slate-800 mt-16 py-6 text-center text-slate-500 text-sm">
     BBMetrics Web &mdash; Powered by FastAPI &amp; Azure
 </footer>
-
 {% block scripts %}{% endblock %}
 </body>
 </html>

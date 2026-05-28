@@ -9,8 +9,8 @@
 {% set pr_metrics = results.pr_review_metrics or [] %}
 {% set ai = scan.ai_insights %}
 
-<!-- Summary Cards + Graphs -->
 {% if scan.status == 'done' %}
+<!-- Summary Cards -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="card p-5">
         <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total PRs</p>
@@ -46,7 +46,7 @@
     </div>
 </div>
 
-<!-- AI Insights (DESTAQUE, sempre que disponível) -->
+<!-- AI Insights -->
 {% if ai %}
 <div class="card p-6 mb-6 border-brand-800 bg-brand-950/30">
     <div class="flex items-center gap-3 mb-4">
@@ -101,7 +101,7 @@
 </div>
 {% endif %}
 
-<!-- Charts -->
+<!-- Gráficos -->
 {% if pr_metrics %}
 <div class="grid md:grid-cols-2 gap-6 mb-6">
     <div class="card p-6">
@@ -115,7 +115,7 @@
 </div>
 {% endif %}
 
-<!-- PR Review Metrics table (paginada) -->
+<!-- Tabela paginada de PRs -->
 {% if pr_metrics %}
 <div class="card overflow-hidden mb-6">
     <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
@@ -172,7 +172,7 @@
 </div>
 {% endif %}
 
-<!-- Users Summary table (deixe como está) -->
+<!-- Tabela de usuários (como estava antes) -->
 {% if users %}
 <div class="card overflow-hidden mb-6">
     <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
@@ -218,7 +218,6 @@
 </div>
 {% endif %}
 {% endif %}
-
 {% endblock %}
 
 {% block scripts %}
@@ -227,6 +226,7 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
     {% if scan.status == 'done' and pr_metrics %}
+    // Paginacao da tabela
     $(document).ready(function() {
         $('#pr-metrics-table').DataTable({
             pageLength: 20,
@@ -243,10 +243,78 @@
         });
     });
 
-    // Charts (permanece igual)
+    // Gráficos (Chart.js)
     (function() {
         const prMetrics = {{ pr_metrics | tojson }};
-        // ... seu código de Chart.js ...
+        // Cycle Time Chart
+        const ctData = prMetrics
+            .filter(p => p.time_open_minutes && p.time_open_minutes !== '')
+            .map(p => ({
+                label: '#' + p.pr_id + (p.author ? ' ' + p.author : ''),
+                val: parseFloat(p.time_open_minutes) / 60
+            }))
+            .sort((a, b) => b.val - a.val)
+            .slice(0, 20);
+
+        if (ctData.length && document.getElementById('cycletime-chart')) {
+            new Chart(document.getElementById('cycletime-chart'), {
+                type: 'bar',
+                data: {
+                    labels: ctData.map(d => d.label),
+                    datasets: [{
+                        label: 'Horas aberto',
+                        data: ctData.map(d => d.val.toFixed(1)),
+                        backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1e293b' } }
+                    }
+                }
+            });
+        }
+
+        // TTFR Chart
+        const ttfrData = prMetrics
+            .filter(p => p.time_to_first_review_minutes && p.time_to_first_review_minutes !== '')
+            .map(p => ({
+                label: '#' + p.pr_id + (p.author ? ' ' + p.author : ''),
+                val: parseFloat(p.time_to_first_review_minutes) / 60
+            }))
+            .sort((a, b) => b.val - a.val)
+            .slice(0, 20);
+
+        if (ttfrData.length && document.getElementById('ttfr-chart')) {
+            new Chart(document.getElementById('ttfr-chart'), {
+                type: 'bar',
+                data: {
+                    labels: ttfrData.map(d => d.label),
+                    datasets: [{
+                        label: 'Horas até primeira review',
+                        data: ttfrData.map(d => d.val.toFixed(1)),
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1e293b' } }
+                    }
+                }
+            });
+        }
     })();
     {% endif %}
 </script>
