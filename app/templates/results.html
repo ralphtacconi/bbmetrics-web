@@ -1,4 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-Hello, world!
+<pre>
+SCAN: {{ scan is defined }}
+RESULTS: {{ scan.results is defined }}
+PR_METRICS: {{ scan.results.pr_review_metrics is defined }}
+</pre>
 {% endblock %}
