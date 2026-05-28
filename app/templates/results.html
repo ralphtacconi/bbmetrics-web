@@ -14,13 +14,17 @@
     <pre>{{ pr_metrics[:2]|tojson }}</pre>
 
     <div id="cards" class="mb-8">
-        <div>Merged PRs: {{ pr_metrics | selectattr('state', 'equalto', 'MERGED') | list | length }}</div>
+        <div>
+            Merged PRs:
+            {{ pr_metrics | selectattr('state', 'equalto', 'MERGED') | list | length }}
+        </div>
         <div>
             Média do tempo aberto (h):
             {% set ns = namespace(total=0, count=0) %}
             {% for p in pr_metrics %}
-            {% if p.time_open_minutes and p.time_open_minutes != '' and p.time_open_minutes != 'NA' %}
-            {% set ns.total = ns.total + p.time_open_minutes|float %}
+            {% set t = p.get('time_open_minutes') %}
+            {% if t and t != '' and t != 'NA' %}
+            {% set ns.total = ns.total + t|float %}
             {% set ns.count = ns.count + 1 %}
             {% endif %}
             {% endfor %}
@@ -48,11 +52,12 @@
         <tbody>
         {% for pr in pr_metrics %}
         <tr>
-            <td>{{ pr.pr_id or '-' }}</td>
-            <td>{{ pr.author or '-' }}</td>
+            <td>{{ pr.get('pr_id', '-') }}</td>
+            <td>{{ pr.get('author', '-') }}</td>
             <td>
-                {% if pr.time_open_minutes and pr.time_open_minutes != '' %}
-                {{ "%.1f"|format(pr.time_open_minutes|float / 60) }}
+                {% set t = pr.get('time_open_minutes') %}
+                {% if t and t != '' and t != 'NA' %}
+                {{ "%.1f"|format(t|float / 60) }}
                 {% else %}—{% endif %}
             </td>
         </tr>
@@ -68,11 +73,10 @@
     const prMetrics = {{ pr_metrics | tojson }};
     console.log("pr_metrics:", prMetrics);
 
-    // Chart.js - Top 20 PRs Cycle Time
     const ctData = prMetrics
         .filter(p => p.time_open_minutes && p.time_open_minutes !== '' && p.time_open_minutes !== 'NA' && !isNaN(Number(p.time_open_minutes)))
         .map(p => ({
-            label: '#' + p.pr_id + (p.author ? ' ' + p.author : ''),
+            label: '#' + (p.pr_id || p['pr_id'] || '-') + ' ' + (p.author || p['author'] || ''),
             val: parseFloat(p.time_open_minutes) / 60
         }))
         .sort((a, b) => b.val - a.val)
