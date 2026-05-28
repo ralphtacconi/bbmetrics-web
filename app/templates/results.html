@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-{% set results = scan.results %}
-{% set pr_metrics = results.pr_review_metrics %}
+{% set results = scan.results if scan and scan.results is defined else {} %}
+{% set pr_metrics = results.pr_review_metrics if results and results.pr_review_metrics is defined else [] %}
 <div class="p-6">
+
+    {% if pr_metrics|length == 0 %}
+    <div style="color: orange; margin-bottom:2em;">
+        Nenhum dado de PR encontrado neste scan – provavelmente scan antigo, incompleto ou corrompido.
+    </div>
+    {% endif %}
+
     <div>Total PRs: {{ pr_metrics | length }}</div>
     <pre>{{ pr_metrics[:2]|tojson }}</pre>
 
