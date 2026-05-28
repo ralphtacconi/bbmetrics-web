@@ -227,7 +227,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     {% if True %}
-    console.log('pr_metrics:', {{ pr_metrics | tojson }});
+    console.log('pr_metrics:', {{ pr_metrics | default([]) | tojson }});
     {% endif %}
 </script>
 {% endblock %}
