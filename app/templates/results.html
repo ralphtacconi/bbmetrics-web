@@ -1,7 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-<pre>
-LENGTH: {{ scan.results.pr_review_metrics | length }}
-DATA: {{ scan.results.pr_review_metrics | tojson }}
-</pre>
+{% set results = scan.results %}
+{% set pr_metrics = results.pr_review_metrics %}
+<div class="p-6">
+    <div>Total PRs: {{ pr_metrics | length }}</div>
+    <pre>{{ pr_metrics[:2]|tojson }}</pre>
+
+    <div id="cards" class="mb-8">
+        <div>Merged PRs: {{ pr_metrics | selectattr('state', 'equalto', 'MERGED') | list | length }}</div>
+        <div>
+            Média do tempo aberto (h):
+            {% set ns = namespace(total=0, count=0) %}
+            {% for p in pr_metrics %}
+            {% if p.time_open_minutes and p.time_open_minutes != '' and p.time_open_minutes != 'NA' %}
+            {% set ns.total = ns.total + p.time_open_minutes|float %}
+            {% set ns.count = ns.count + 1 %}
+            {% endif %}
+            {% endfor %}
+            {% if ns.count > 0 %}
+            {{ "%.1f"|format(ns.total/ns.count/60) }}
+            {% else %}
+            —
+            {% endif %}
+        </div>
+    </div>
+
+    <table border=1>
+        <thead>
+        <tr>
+            <th>PR</th>
+            <th>Author</th>
+            <th>Cycle (h)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pr in pr_metrics %}
+        <tr>
+            <td>{{ pr.pr_id or '-' }}</td>
+            <td>{{ pr.author or '-' }}</td>
+            <td>
+                {% if pr.time_open_minutes and pr.time_open_minutes != '' %}
+                {{ "%.1f"|format(pr.time_open_minutes|float / 60) }}
+                {% else %}—{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const prMetrics = {{ scan.results.pr_review_metrics | tojson }};
+    console.log("pr_metrics:", prMetrics);
+    // (Aqui vai seu código Chart.js, se quiser)
+</script>
 {% endblock %}
