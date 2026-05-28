@@ -229,6 +229,8 @@ async def scan_results(request: Request, scan_id: str) -> HTMLResponse:
         raise HTTPException(status_code=404, detail="Scan not found.")
     import pprint
     pprint.pprint(doc)
+    print("==== DEBUG pr_review_metrics ====")
+    print(doc["results"]["pr_review_metrics"])
     return templates.TemplateResponse(request, "results.html", {"scan": doc})
 
 

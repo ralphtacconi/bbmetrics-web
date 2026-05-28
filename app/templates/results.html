@@ -9,6 +9,8 @@
 {% set pr_metrics = results.pr_review_metrics or [] %}
 {% set ai = scan.ai_insights %}
 
+<pre>{{ pr_metrics | default([]) | tojson }}</pre>
+
 {% if scan.status == 'done' %}
 <!-- Summary Cards -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
