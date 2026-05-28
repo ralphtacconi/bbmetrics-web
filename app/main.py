@@ -57,19 +57,19 @@ def _read_csv_to_dicts(path: str) -> List[Dict[str, Any]]:
 
 
 def _run_scan_background(
-    scan_id: str,
-    project_key: str,
-    repos: List[str],
-    pr_start: str,
-    pr_end: str,
-    bitbucket_base_url: str,
-    bitbucket_username: str,
-    bitbucket_password: str,
-    user_filter: Optional[str],
-    pr_states: str,
-    output_mode: str,
-    enable_diffstat: bool,
-    date_field: str,
+        scan_id: str,
+        project_key: str,
+        repos: List[str],
+        pr_start: str,
+        pr_end: str,
+        bitbucket_base_url: str,
+        bitbucket_username: str,
+        bitbucket_password: str,
+        user_filter: Optional[str],
+        pr_states: str,
+        output_mode: str,
+        enable_diffstat: bool,
+        date_field: str,
 ) -> None:
     doc = _load_scan(scan_id) or {}
     doc["status"] = "running"
@@ -111,10 +111,14 @@ def _run_scan_background(
             }
 
         ai_insights = generate_insights(results)
-
         doc["status"] = "done"
         doc["results"] = results
-        doc["ai_insights"] = ai_insights
+        # PATCH: ai_insights NUNCA None
+        doc["ai_insights"] = ai_insights or {
+            "summary": "Nenhum insight de IA foi gerado para este scan.",
+            "risk_alerts": [],
+            "recommendations": []
+        }
         doc["error"] = None
         _store_scan(doc)
 
@@ -130,7 +134,6 @@ def _run_scan_background(
                 os.environ.pop(k, None)
             else:
                 os.environ[k] = v
-
 
 # ---------------------------------------------------------------------------
 # Defining Routes
