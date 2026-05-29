@@ -221,26 +221,34 @@ async def start_scan(
 
     return JSONResponse({"scan_id": scan_id})
 
-
 @app.get("/results/{scan_id}", response_class=HTMLResponse)
 async def scan_results(request: Request, scan_id: str) -> HTMLResponse:
-    print(f"DEBUG: Chamou scan_results com scan_id={scan_id}")
-    doc = _load_scan(scan_id)
-    if not doc:
-        return HTMLResponse("<h2>Scan não encontrado.</h2>", status_code=404)
+    try:
+        print(f"DEBUG: Chamou scan_results com scan_id={scan_id}")
+        doc = _load_scan(scan_id)
+        if not doc:
+            return HTMLResponse("<h2>Scan não encontrado.</h2>", status_code=404)
 
-    if "results" not in doc or not doc["results"] or "pr_review_metrics" not in doc["results"] or doc["results"]["pr_review_metrics"] is None:
-        print("Scan encontrado mas não tem campo pr_review_metrics.")
+        if "results" not in doc or not doc["results"] or "pr_review_metrics" not in doc["results"] or doc["results"]["pr_review_metrics"] is None:
+            print("Scan encontrado mas não tem campo pr_review_metrics.")
+            import pprint
+            pprint.pprint(doc)
+            return HTMLResponse("<h2>Scan sem resultados de métricas de PR.</h2>", status_code=200)
+
         import pprint
         pprint.pprint(doc)
-        return HTMLResponse("<h2>Scan sem resultados de métricas de PR.</h2>", status_code=200)
+        print("==== DEBUG pr_review_metrics ====")
+        print(doc["results"]["pr_review_metrics"])
 
-    import pprint
-    pprint.pprint(doc)
-    print("==== DEBUG pr_review_metrics ====")
-    print(doc["results"]["pr_review_metrics"])
-
-    return templates.TemplateResponse("results.html", {"request": request, "scan": doc})
+        return templates.TemplateResponse("results.html", {"request": request, "scan": doc})
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        # Exibe o erro diretamente na resposta para debug rápido
+        return HTMLResponse(
+            f"<h2>Internal Server Error</h2><pre>{e}\n\n{tb}</pre>",
+            status_code=500
+        )
 
 @app.get("/api/scan/{scan_id}/status")
 async def scan_status(scan_id: str) -> JSONResponse:
