@@ -227,13 +227,20 @@ async def scan_results(request: Request, scan_id: str) -> HTMLResponse:
     print(f"DEBUG: Chamou scan_results com scan_id={scan_id}")
     doc = _load_scan(scan_id)
     if not doc:
-        raise HTTPException(status_code=404, detail="Scan not found.")
+        return HTMLResponse("<h2>Scan não encontrado.</h2>", status_code=404)
+
+    if "results" not in doc or not doc["results"] or "pr_review_metrics" not in doc["results"] or doc["results"]["pr_review_metrics"] is None:
+        print("Scan encontrado mas não tem campo pr_review_metrics.")
+        import pprint
+        pprint.pprint(doc)
+        return HTMLResponse("<h2>Scan sem resultados de métricas de PR.</h2>", status_code=200)
+
     import pprint
     pprint.pprint(doc)
     print("==== DEBUG pr_review_metrics ====")
     print(doc["results"]["pr_review_metrics"])
-    return templates.TemplateResponse(request, "results.html", {"scan": doc})
 
+    return templates.TemplateResponse("results.html", {"request": request, "scan": doc})
 
 @app.get("/api/scan/{scan_id}/status")
 async def scan_status(scan_id: str) -> JSONResponse:
